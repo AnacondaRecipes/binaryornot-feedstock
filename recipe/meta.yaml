@@ -31,7 +31,11 @@ test:
     - .
   requires:
     - coverage
-    - hypothesis
+    # Constrain version of hypothesis so tests don't fail because they rely on
+    # what are now deprecated features.  The choice of hypothesis version is
+    # based on what was available around the same time as the release of this
+    # package; it is not necessarily the last known working version.
+    - hypothesis <3.30
     - python
     - setuptools
   commands:
