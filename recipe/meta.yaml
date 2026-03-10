@@ -1,7 +1,6 @@
-{% set version = "0.4.4" %}
+{% set version = "0.6.0" %}
 {% set gh_org = "audreyr" %}
 {% set gh_repo = "binaryornot" %}
-
 
 package:
   name: {{ gh_repo }}
@@ -9,12 +8,12 @@ package:
 
 source:
   fn: {{ gh_repo }}-{{ version }}.tar.gz
-  url: https://pypi.io/packages/source/{{ gh_repo[0] }}/{{ gh_repo }}/{{ gh_repo }}-{{ version }}.tar.gz
-  sha256: 359501dfc9d40632edc9fac890e19542db1a287bbcfa58175b66658392018061
+  url: https://pypi.org/packages/source/{{ gh_repo[0] }}/{{ gh_repo }}/{{ gh_repo }}-{{ version }}.tar.gz
+  sha256: cc8d57cfa71d74ff8c28a7726734d53a851d02fad9e3a5581fb807f989f702f0
 
 build:
   noarch: python
-  number: 1
+  number: 0
   script: python -m pip install --no-deps --ignore-installed .
 
 requirements:
@@ -45,8 +44,9 @@ about:
   home: https://github.com/{{ gh_org }}/{{ gh_repo }}
   license: BSD-3-Clause
   summary: >
-            Ultra-lightweight pure Python package to check if a file is binary
-            or text.
+    Ultra-lightweight pure Python package to check if a file is binary
+    or text.
+
 
 extra:
   recipe-maintainers:
