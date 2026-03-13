@@ -32,6 +32,8 @@ requirements:
 {% set deselect_tests = deselect_tests + " --deselect=tests/test_check.py::TestErrorHandling::test_unreadable_file_raises" %}  # [win]
 
 test:
+  imports:
+    - binaryornot
   source_files:
     - tests
   requires:
@@ -41,7 +43,6 @@ test:
   commands:
     - pip check
     - pytest tests/test_check.py tests/test_encoding_coverage.py tests/test_sdist.py {{ deselect_tests }}
-
 
 about:
   home: https://github.com/binaryornot/binaryornot
