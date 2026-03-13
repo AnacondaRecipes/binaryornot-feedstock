@@ -34,7 +34,6 @@ test:
     - pip
     - pytest
     - hypothesis
-    - uv-build
   commands:
     - pip check
     - pytest tests/test_check.py tests/test_encoding_coverage.py tests/test_sdist.py {{ deselect_tests }}
