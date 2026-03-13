@@ -1,52 +1,58 @@
-{% set version = "0.4.4" %}
-{% set gh_org = "audreyr" %}
-{% set gh_repo = "binaryornot" %}
-
+{% set name = "binaryornot" %}
+{% set version = "0.6.0" %}
 
 package:
-  name: {{ gh_repo }}
+  name: {{ name }}
   version: {{ version }}
 
 source:
-  fn: {{ gh_repo }}-{{ version }}.tar.gz
-  url: https://pypi.io/packages/source/{{ gh_repo[0] }}/{{ gh_repo }}/{{ gh_repo }}-{{ version }}.tar.gz
-  sha256: 359501dfc9d40632edc9fac890e19542db1a287bbcfa58175b66658392018061
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: cc8d57cfa71d74ff8c28a7726734d53a851d02fad9e3a5581fb807f989f702f0
 
 build:
-  noarch: python
-  number: 1
-  script: python -m pip install --no-deps --ignore-installed .
+  number: 0
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
+  skip: true  # [py<310]
 
 requirements:
   host:
     - pip
     - python
-    - setuptools
+    - hatchling
   run:
     - python
-    - chardet
+
+# E FileNotFoundError: [Errno 2] No such file or directory: 'tests/isBinaryFile/this_is_not_a_bin.pyc'
+# E FileNotFoundError: [Errno 2] No such file or directory: 'tests/files/.DS_Store'
+{% set deselect_tests = "--deselect=tests/test_check.py::TestIsBinary::test_negative_binary" %}
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_check.py::TestIsBinary::test_ds_store" %}
+# E FileNotFoundError: [Errno 2] No such file or directory: 'uv'
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_sdist.py::TestSdistContents::test_sdist_includes_pyc_fixtures" %}
+# E PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\TASK_1~2\\AppData\\Local\\Temp\\tmpnjgs3nxd'
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_check.py::TestErrorHandling::test_unreadable_file_raises" %}  # [win]
 
 test:
+  imports:
+    - binaryornot
   source_files:
-    - .
+    - tests
   requires:
-    - coverage
-    # Constrain version of hypothesis so tests don't fail because they rely on
-    # what are now deprecated features.  The choice of hypothesis version is
-    # based on what was available around the same time as the release of this
-    # package; it is not necessarily the last known working version.
-    - hypothesis <3.30
-    - python
-    - setuptools
+    - pip
+    - pytest
+    - hypothesis
   commands:
-    - python setup.py test
+    - pip check
+    - pytest tests/test_check.py tests/test_encoding_coverage.py tests/test_sdist.py {{ deselect_tests }}
 
 about:
-  home: https://github.com/{{ gh_org }}/{{ gh_repo }}
-  license: BSD-3-Clause
-  summary: >
-            Ultra-lightweight pure Python package to check if a file is binary
-            or text.
+  home: https://github.com/binaryornot/binaryornot
+  license: MIT
+  license_family: MIT
+  license_file: LICENSE
+  summary: Ultra-lightweight pure Python package to check if a file is binary or text.
+  description: Ultra-lightweight pure Python package to check if a file is binary or text.
+  dev_url: https://github.com/binaryornot/binaryornot
+  doc_url: https://github.com/binaryornot/binaryornot/blob/main/README.md
 
 extra:
   recipe-maintainers:
