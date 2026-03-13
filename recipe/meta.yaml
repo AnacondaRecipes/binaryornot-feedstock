@@ -1,52 +1,54 @@
+{% set name = "binaryornot" %}
 {% set version = "0.6.0" %}
-{% set gh_org = "audreyr" %}
-{% set gh_repo = "binaryornot" %}
 
 package:
-  name: {{ gh_repo }}
+  name: {{ name }}
   version: {{ version }}
 
 source:
-  fn: {{ gh_repo }}-{{ version }}.tar.gz
-  url: https://pypi.org/packages/source/{{ gh_repo[0] }}/{{ gh_repo }}/{{ gh_repo }}-{{ version }}.tar.gz
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
   sha256: cc8d57cfa71d74ff8c28a7726734d53a851d02fad9e3a5581fb807f989f702f0
 
 build:
-  noarch: python
   number: 0
-  script: python -m pip install --no-deps --ignore-installed .
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
+  skip: true  # [py<310]
 
 requirements:
   host:
     - pip
     - python
-    - setuptools
+    - hatchling
   run:
     - python
-    - chardet
+
+# E FileNotFoundError: [Errno 2] No such file or directory: 'tests/isBinaryFile/this_is_not_a_bin.pyc'
+{% set deselect_tests = "--deselect=tests/test_check.py::TestIsBinary::test_negative_binary" %}
+# E FileNotFoundError: [Errno 2] No such file or directory: 'uv'
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_sdist.py::TestSdistContents::test_sdist_includes_pyc_fixtures" %}
 
 test:
   source_files:
-    - .
+    - tests
   requires:
-    - coverage
-    # Constrain version of hypothesis so tests don't fail because they rely on
-    # what are now deprecated features.  The choice of hypothesis version is
-    # based on what was available around the same time as the release of this
-    # package; it is not necessarily the last known working version.
-    - hypothesis <3.30
-    - python
-    - setuptools
+    - pip
+    - pytest
+    - hypothesis
+    - uv-build
   commands:
-    - python setup.py test
+    - pip check
+    - pytest tests/test_check.py tests/test_encoding_coverage.py tests/test_sdist.py {{ deselect_tests }}
+
 
 about:
-  home: https://github.com/{{ gh_org }}/{{ gh_repo }}
-  license: BSD-3-Clause
-  summary: >
-    Ultra-lightweight pure Python package to check if a file is binary
-    or text.
-
+  home: https://github.com/binaryornot/binaryornot
+  license: MIT
+  license_family: MIT
+  license_file: LICENSE
+  summary: Ultra-lightweight pure Python package to check if a file is binary or text.
+  description: Ultra-lightweight pure Python package to check if a file is binary or text.
+  dev_url: https://github.com/binaryornot/binaryornot
+  doc_url: https://github.com/binaryornot/binaryornot/blob/main/README.md
 
 extra:
   recipe-maintainers:
