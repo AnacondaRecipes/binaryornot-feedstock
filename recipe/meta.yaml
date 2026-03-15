@@ -13,6 +13,8 @@ build:
   number: 0
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
   skip: true  # [py<310]
+  entry_points:
+    - binaryornot = binaryornot.check:main
 
 requirements:
   host:
@@ -42,6 +44,7 @@ test:
     - hypothesis
   commands:
     - pip check
+    - binaryornot --help
     - pytest tests/test_check.py tests/test_encoding_coverage.py tests/test_sdist.py {{ deselect_tests }}
 
 about:
@@ -52,7 +55,7 @@ about:
   summary: Ultra-lightweight pure Python package to check if a file is binary or text.
   description: Ultra-lightweight pure Python package to check if a file is binary or text.
   dev_url: https://github.com/binaryornot/binaryornot
-  doc_url: https://github.com/binaryornot/binaryornot/blob/main/README.md
+  doc_url: https://binaryornot.github.io/binaryornot
 
 extra:
   recipe-maintainers:
